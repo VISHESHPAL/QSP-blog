@@ -19,7 +19,7 @@ export const loginUser = expressAsyncHandler(async(req, res, next) =>{
     let {email , password} = req.body;
     console.log(req.body)
 
-    let existedUser = await User.findOne({email}).select("-password")
+    let existedUser = await User.findOne({email}).select("+password")
     console.log(existedUser);
     if(!existedUser) {
         return next (new CustomError("User Not Found" , 404))

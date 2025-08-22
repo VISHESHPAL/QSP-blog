@@ -22,19 +22,19 @@ export const createBlog = expressAsyncHandler(async (req, res, next) => {
 });
 
 export const getBlogs = expressAsyncHandler(async (req, res, next) => {
-  let blogs = await Blog.find().select("-__v -createdAt -updatedAt'");
+  let blogs = await Blog.find().select("-__v -createdAt -updatedAt");
   if (blogs.length === 0) return next(new CustomError("No Blogs Found !", 404));
 
-  new ApiResponse(200, true, "Blogs Fetehed Successfully ! ");
+  new ApiResponse(200, true, "Blogs Fetehed Successfully ! ", blogs).send(res)
 });
 
 export const getSingleBlog = expressAsyncHandler(async (req, res, next) => {
-  let blog = await Blog.find(req.params.id).select(
-    "-__v -createdAt -updatedAt'"
+  let blog = await Blog.findById(req.params.id).select(
+    "-__v -createdAt -updatedAt"
   );
   if (!blog) return next(new CustomError("No Blog Found !", 404));
 
-  new ApiResponse(200, true, "Blog Fetehed Successfully ! ");
+  new ApiResponse(200, true, "Blog Fetehed Successfully ! " , blog).send(res)
 });
 
 export const updateBlog = expressAsyncHandler(async (req, res, next) => {
@@ -46,7 +46,7 @@ export const updateBlog = expressAsyncHandler(async (req, res, next) => {
 
   if(!updateBlog) return next (new CustomError("Blog Not Found " , 404));
 
-  new ApiResponse(201 , true , "Blog Updated Successfully ! ")
+  new ApiResponse(201 , true , "Blog Updated Successfully ! ",updateBlog).send(res)
 
 });
 
@@ -64,5 +64,5 @@ export const deleteBlog = expressAsyncHandler(async (req, res, next) => {
   let deleteBlog = await Blog.findByIdAndDelete(req.params.id);
   if(!deleteBlog) return next(new CustomError("Blog Not Found " , 404));
 
-  new ApiResponse(201 , true , "Blog Deleted Successfully ! ")
+  new ApiResponse(201 , true , "Blog Deleted Successfully ! ").send(res)
 });

@@ -8,9 +8,9 @@ const blogRoutes = express.Router();
 blogRoutes.post("/add", validateRequest(addBlogValidation) , createBlog)
 blogRoutes.get("/all", getBlogs)
 blogRoutes.get("/:id", getSingleBlog)
-blogRoutes.get("/:id", updateBlog)
+blogRoutes.patch("/:id", updateBlog)
 blogRoutes.patch("/:id", validateRequest(updateBlogValidation) , updateBlog)
 blogRoutes.delete("/:id", deleteBlog)
-blogRoutes.put("/:id", updateBlogPut)
+blogRoutes.put("/:id", updateBlogPut)    // this is not working in the routes 
 
 export default blogRoutes
