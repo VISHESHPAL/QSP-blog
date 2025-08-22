@@ -4,6 +4,10 @@ const error = (err, req, res, next) => {
 
   let error = { ...err };
 
+  if(err.name === 'CastError'){
+    error.message = `Invalid ${error.kind} , please provide a valid path ${error.path}`;
+    error.statusCode = 400
+  }
 
   error.message = error.message || "Internal Server Error";
   error.statusCode = error.statusCode || 500;
