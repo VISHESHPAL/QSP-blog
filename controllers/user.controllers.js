@@ -43,6 +43,11 @@ export const loginUser = expressAsyncHandler(async(req, res, next) =>{
 })
 
 export const logoutrUser = expressAsyncHandler(async(req, res, next) =>{
+
+    // res.clearCookie("token" , '', {maxAge : Date.now()});
+
+    res.clearCookie('token')
+    new ApiResponse(200,  true , "User logout Sucessfully ! ", token).send(res)
     
 })
 

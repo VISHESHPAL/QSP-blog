@@ -17,10 +17,11 @@ const blogSchema = new mongoose.Schema(
       maxLength : 1000
     },
 
-    // createdBy: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "User",
-    // },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required : true
+    },
     category: {
       type: String,
     },
