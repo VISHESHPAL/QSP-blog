@@ -14,16 +14,12 @@ import{authenticate}  from "../middleware/auth.middleware.js"
 
 const userRouter = Router();
 
-userRouter.post(
-  "/register",
-  validateRequest(registerUserValidation),
-  registerUser
-);
+userRouter.post("/register",validateRequest(registerUserValidation),registerUser);
 userRouter.post("/login", loginUser);
 userRouter.post("/logout", authenticate , logoutUser);
 userRouter.patch("/edit-profile", authenticate , updateProfile);
 userRouter.patch("/edit-password",authenticate,updatePassword);
-userRouter.delete("/delete",authenticate, deleteUser);
+userRouter.delete("/delete/:id",authenticate, deleteUser);
 
 
 export default userRouter;

@@ -16,10 +16,10 @@ export const registerUser = expressAsyncHandler(async (req, res, next) => {
 
 export const loginUser = expressAsyncHandler(async (req, res, next) => {
   let { email, password } = req.body;
-  console.log(req.body); 
+//   console.log(req.body); 
 
   let existedUser = await User.findOne({ email }).select("+password");
-  console.log(existedUser);
+//   console.log(existedUser);
   if (!existedUser) {
     return next(new CustomError("User Not Found", 404));
   }
@@ -43,7 +43,7 @@ export const logoutUser = expressAsyncHandler(async (req, res, next) => {
   // res.clearCookie("token" , '', {maxAge : Date.now()});
 
   res.clearCookie("token");
-  new ApiResponse(200, true, "User logout Sucessfully ! ", token).send(res);
+  new ApiResponse(200, true, "User logout Sucessfully ! ").send(res);
 });
 
 export const updateProfile = expressAsyncHandler(async (req, res, next) => {
@@ -72,9 +72,18 @@ export const updateProfile = expressAsyncHandler(async (req, res, next) => {
   ).send(res);
 });
 
-export const updatePassword = expressAsyncHandler(async (req, res, next) => {});
 
-export const deleteUser = expressAsyncHandler(async (req, res, next) => {});
+export const deleteUser = expressAsyncHandler(async (req, res, next) => {
+
+    let userId = req.user._id;
+
+    await User.findByIdAndDelete(userId);
+
+    new ApiResponse(201 , true , "User Deleted Successfully ! ").send(res)
+    
+});
+
+export const updatePassword = expressAsyncHandler(async (req, res, next) => {});
 
 export const currentProfile = expressAsyncHandler(async (req, res, next) => {});
 

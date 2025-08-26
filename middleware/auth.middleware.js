@@ -15,9 +15,9 @@ export const authenticate = expressAsyncHandler(async(req, res, next) =>{
     const decodedToken =  jwt.verify(token , process.env.JWT_SECRET_KEY);
     // console.log(decodedToken)
     let user = await User.findById(decodedToken.id);
-    if(!user) return next( new CustomError("Invalid Session Please Login",  401))
+    if(!user) return next( new CustomError("Please Login",  401))
     
     req.user = user;    
     
     next();
-})
+}) 
