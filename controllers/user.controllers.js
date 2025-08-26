@@ -1,94 +1,81 @@
-import expressAsyncHandler from 'express-async-handler'
-import User from '../models/user.model.js';
-import ApiResponse from '../utils/ApiResponse.util.js';
-import CustomError from '../utils/CustomError.util.js';
-import { tokenGenerate } from '../utils/token.utils.js';
+import expressAsyncHandler from "express-async-handler";
+import User from "../models/user.model.js";
+import ApiResponse from "../utils/ApiResponse.util.js";
+import CustomError from "../utils/CustomError.util.js";
+import { tokenGenerate } from "../utils/token.utils.js";
 
-export const registerUser = expressAsyncHandler(async(req, res, next) =>{
+export const registerUser = expressAsyncHandler(async (req, res, next) => {
+  const { name, email, password } = req.body;
 
-    const {name , email , password} = req.body;
+  let newUser = await User.create({ name, email, password });
 
-    let newUser = await User.create({name , email ,password})
+  new ApiResponse(201, true, " User Registered Successfully ! ", newUser).send(
+    res
+  );
+});
 
-    new ApiResponse(201 , true ,  " User Registered Successfully ! ", newUser).send(res)
+export const loginUser = expressAsyncHandler(async (req, res, next) => {
+  let { email, password } = req.body;
+  console.log(req.body); 
 
-})
+  let existedUser = await User.findOne({ email }).select("+password");
+  console.log(existedUser);
+  if (!existedUser) {
+    return next(new CustomError("User Not Found", 404));
+  }
 
-export const loginUser = expressAsyncHandler(async(req, res, next) =>{
+  let isMatch = await existedUser.comparePassword(password);
+  if (!isMatch) {
+    return next(new CustomError("Invalid Crediantials", 401));
+  }
 
-    let {email , password} = req.body;
-    console.log(req.body)
+  let token = tokenGenerate(existedUser._id);
 
-    let existedUser = await User.findOne({email}).select("+password")
-    console.log(existedUser);
-    if(!existedUser) {
-        return next (new CustomError("User Not Found" , 404))
+  res.cookie("token", token, {
+    maxAge: 1 * 60 * 60 * 1000,
+    httpOnly: true,
+  });
+
+  new ApiResponse(201, true, "User Logged In Successfully ! ", token).send(res);
+});
+
+export const logoutUser = expressAsyncHandler(async (req, res, next) => {
+  // res.clearCookie("token" , '', {maxAge : Date.now()});
+
+  res.clearCookie("token");
+  new ApiResponse(200, true, "User logout Sucessfully ! ", token).send(res);
+});
+
+export const updateProfile = expressAsyncHandler(async (req, res, next) => {
+  let userId = req.user._id;
+  let { email, name } = req.body;
+
+  let updateProfile = await User.findByIdAndUpdate(
+    userId,
+    {
+      name,
+      email,
+    },
+    {
+      new: true,
+      runValidators: true,
     }
+  );
 
-    let isMatch = await existedUser.comparePassword(password)
-    if(!isMatch) {
-        return next (new CustomError("Invalid Crediantials" , 401))
-    }
+  if (!updateProfile) return next(new CustomError("No User Found !", 401));
 
-    let token = tokenGenerate(existedUser._id);
+  new ApiResponse(
+    200,
+    true,
+    " Profile Updated Successfully  ! ",
+    updateProfile
+  ).send(res);
+});
 
-    res.cookie('token' , token ,{
-        maxAge : 1 * 60 * 60 * 1000,
-        httpOnly : true
-    });
+export const updatePassword = expressAsyncHandler(async (req, res, next) => {});
 
+export const deleteUser = expressAsyncHandler(async (req, res, next) => {});
 
-    new ApiResponse(201 , true , "User Logged In Successfully ! ", token).send(res)
-    
-})
+export const currentProfile = expressAsyncHandler(async (req, res, next) => {});
 
-export const logoutrUser = expressAsyncHandler(async(req, res, next) =>{
-
-    // res.clearCookie("token" , '', {maxAge : Date.now()});
-
-    res.clearCookie('token')
-    new ApiResponse(200,  true , "User logout Sucessfully ! ", token).send(res)
-    
-})
-
-
-export const updateProfile = expressAsyncHandler(async(req, res, next) =>{
-
-    let userId = req.user._id;
-    let {email , name } = req.body;
-
-    let updateProfile = await User.findByIdAndUpdate(userId ,
-        {
-            name , email
-        },
-        {
-            new : true ,
-            runValidators : true
-        }
-    )
-
-    if(!updateProfile) return  next (new CustomError ("No User Found !" , 401))
-
-
-     new ApiResponse(200 , true , " Profile Updated Successfully  ! ", updateProfile ).send(res)   
-    
-})
-
-export const updatePassword = expressAsyncHandler(async(req, res, next) =>{
-    
-})
-
-export const deleteUser = expressAsyncHandler(async(req, res, next) =>{
-    
-})
-
-
-
-export const currentProfile = expressAsyncHandler(async(req, res, next) =>{
-    
-})
-
-
-export const currentUser = expressAsyncHandler(async(req, res, next) =>{
-    
-})
+export const currentUser = expressAsyncHandler(async (req, res, next) => {});

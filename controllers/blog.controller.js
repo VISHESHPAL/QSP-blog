@@ -53,29 +53,13 @@ export const getSingleBlog = expressAsyncHandler(async (req, res, next) => {
 });
 
 export const updateBlog = expressAsyncHandler(async (req, res, next) => {
-  let updateBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!updateBlog) return next(new CustomError("Blog Not Found ", 404));
-
-  new ApiResponse(201, true, "Blog Updated Successfully ! ", updateBlog).send(
-    res
-  );
-});
-
-export const updateBlogPut = expressAsyncHandler(async (req, res, next) => {
   let userId = req.user._id;
-  let updateBlog = await Blog.findOneAndUpdate(
-    {
-      _id: req.params.id,
-      createdBy: userId,
-    },
+  let updateBlog = await Blog.findByIdAndUpdate(
+    { _id: req.params.id, createdBy: userId },
     req.body,
     {
-      new  : true ,
-      runValidators : true
+      new: true,
+      runValidators: true,
     }
   );
 
@@ -86,15 +70,40 @@ export const updateBlogPut = expressAsyncHandler(async (req, res, next) => {
   );
 });
 
+// export const updateBlogPut = expressAsyncHandler(async (req, res, next) => {
+//   let userId = req.user._id;
+//   let updateBlog = await Blog.findOneAndUpdate(
+//     {
+//       _id: req.params.id,
+//       createdBy: userId,
+//     },
+//     req.body,
+//     {
+//       new: true,
+//       runValidators: true,
+//     }
+//   );
+
+//   if (!updateBlog) return next(new CustomError("Blog Not Found ", 404));
+
+//   new ApiResponse(201, true, "Blog Updated Successfully ! ", updateBlog).send(
+//     res
+//   );
+// });
+
 export const deleteBlog = expressAsyncHandler(async (req, res, next) => {
   let userId = req.user._id;
+  // console.log(userId)
+
   let deleteBlog = await Blog.findOneAndDelete({
     _id: req.params.id,
     createdBy: userId,
   });
 
-  // let deleteBlog = await Blog.findOneAndDelete({
+  // const deleteBlog = await Blog.findOneAndDelete({
   //   $and: [{ _id: req.params.id }, { createdBy: userId }],
+  // });
+
   //! });  LOGICAL AND IN THE MONGODB
 
   if (!deleteBlog) return next(new CustomError("Blog Not Found ", 404));

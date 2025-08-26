@@ -4,11 +4,13 @@ import { registerUserValidation } from "../validation/user.validation.js";
 import {
   deleteUser,
   loginUser,
-  logoutrUser,
+  logoutUser,
   registerUser,
   updatePassword,
   updateProfile,
 } from "../controllers/user.controllers.js";
+
+import{authenticate}  from "../middleware/auth.middleware.js"
 
 const userRouter = Router();
 
@@ -18,10 +20,10 @@ userRouter.post(
   registerUser
 );
 userRouter.post("/login", loginUser);
-userRouter.post("/logout", logoutrUser);
-userRouter.patch("/edit-profile", updateProfile);
-userRouter.patch("/edit-password", updatePassword);
-userRouter.delete("/delete", deleteUser);
+userRouter.post("/logout", authenticate , logoutUser);
+userRouter.patch("/edit-profile", authenticate , updateProfile);
+userRouter.patch("/edit-password",authenticate,updatePassword);
+userRouter.delete("/delete",authenticate, deleteUser);
 
 
 export default userRouter;
