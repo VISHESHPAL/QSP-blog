@@ -53,6 +53,24 @@ export const logoutrUser = expressAsyncHandler(async(req, res, next) =>{
 
 
 export const updateProfile = expressAsyncHandler(async(req, res, next) =>{
+
+    let userId = req.user._id;
+    let {email , name } = req.body;
+
+    let updateProfile = await User.findByIdAndUpdate(userId ,
+        {
+            name , email
+        },
+        {
+            new : true ,
+            runValidators : true
+        }
+    )
+
+    if(!updateProfile) return  next (new CustomError ("No User Found !" , 401))
+
+
+     new ApiResponse(200 , true , " Profile Updated Successfully  ! ", updateProfile ).send(res)   
     
 })
 
@@ -61,5 +79,16 @@ export const updatePassword = expressAsyncHandler(async(req, res, next) =>{
 })
 
 export const deleteUser = expressAsyncHandler(async(req, res, next) =>{
+    
+})
+
+
+
+export const currentProfile = expressAsyncHandler(async(req, res, next) =>{
+    
+})
+
+
+export const currentUser = expressAsyncHandler(async(req, res, next) =>{
     
 })
