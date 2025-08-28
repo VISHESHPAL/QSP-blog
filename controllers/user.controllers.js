@@ -87,21 +87,30 @@ export const deleteUser = expressAsyncHandler(async (req, res, next) => {
 export const updatePassword = expressAsyncHandler(async (req, res, next) => {
 
   let user = req.user;
+  console.log(user?.password)
 
   let {oldPassword ,password} = req.body;
-
-  let isMatch = await User.comparePassword(oldPassword);
+   
+  let isMatch = await user.comparePassword(oldPassword);
   if(!isMatch) return next (new CustomError("Old Password Not Match" , 401))
 
-  await User.findByIdAndUpdate(userId , {password}, {runValidators : true , new: true})
+  // await User.findByIdAndUpdate(userId , {password}, {runValidators : true , new: true})
 
-  user.password = password;
+  user.password = password;    
   await user.save(); // saving the user and invoking the pre save method
+
+  new ApiResponse(201 , true , "Password Updated Successfully ! ")
 });
 
-export const currentProfile = expressAsyncHandler(async (req, res, next) => {
+export const getProfile = expressAsyncHandler(async (req, res, next) => {
+  let user = await User.findById(req.params.id).populate({
+    path: "blogs.blogId",
+    select : "title description category _id"
+  })
+
+  new ApiResponse(201, true , "Profile Fetched Successfully ! " , user).send(res)
   
-});
+}); 
 
 export const currentUser = expressAsyncHandler(async (req, res, next) => {
 

@@ -4,6 +4,7 @@ import { registerUserValidation } from "../validation/user.validation.js";
 import {
   currentUser,
   deleteUser,
+  getProfile,
   loginUser,
   logoutUser,
   registerUser,
@@ -21,6 +22,7 @@ userRouter.post("/logout", authenticate , logoutUser);
 userRouter.patch("/edit-profile", authenticate , updateProfile);
 userRouter.patch("/edit-password",authenticate,updatePassword);
 userRouter.delete("/delete/:id",authenticate, deleteUser);
+userRouter.get("/profile/:id", authenticate , getProfile)
 userRouter.get("/isLoggedIn", authenticate, currentUser, );
 
 
