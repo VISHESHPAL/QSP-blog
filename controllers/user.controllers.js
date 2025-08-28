@@ -78,13 +78,32 @@ export const deleteUser = expressAsyncHandler(async (req, res, next) => {
     let userId = req.user._id;
 
     await User.findByIdAndDelete(userId);
+    res.clearCookie("token")
 
     new ApiResponse(201 , true , "User Deleted Successfully ! ").send(res)
     
 });
 
-export const updatePassword = expressAsyncHandler(async (req, res, next) => {});
+export const updatePassword = expressAsyncHandler(async (req, res, next) => {
 
-export const currentProfile = expressAsyncHandler(async (req, res, next) => {});
+  let user = req.user;
 
-export const currentUser = expressAsyncHandler(async (req, res, next) => {});
+  let {oldPassword ,password} = req.body;
+
+  let isMatch = await User.comparePassword(oldPassword);
+  if(!isMatch) return next (new CustomError("Old Password Not Match" , 401))
+
+  await User.findByIdAndUpdate(userId , {password}, {runValidators : true , new: true})
+
+  user.password = password;
+  await user.save(); // saving the user and invoking the pre save method
+});
+
+export const currentProfile = expressAsyncHandler(async (req, res, next) => {
+  
+});
+
+export const currentUser = expressAsyncHandler(async (req, res, next) => {
+
+  new ApiResponse(200 ,  true , "User is Logged In").send(res)
+});

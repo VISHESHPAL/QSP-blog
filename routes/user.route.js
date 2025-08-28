@@ -2,6 +2,7 @@ import { Router } from "express";
 import validateRequest from "../middleware/blog.validation.middleware.js";
 import { registerUserValidation } from "../validation/user.validation.js";
 import {
+  currentUser,
   deleteUser,
   loginUser,
   logoutUser,
@@ -20,6 +21,7 @@ userRouter.post("/logout", authenticate , logoutUser);
 userRouter.patch("/edit-profile", authenticate , updateProfile);
 userRouter.patch("/edit-password",authenticate,updatePassword);
 userRouter.delete("/delete/:id",authenticate, deleteUser);
+userRouter.get("/isLoggedIn", authenticate, currentUser, );
 
 
 export default userRouter;
